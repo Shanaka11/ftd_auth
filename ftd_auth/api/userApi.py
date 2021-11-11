@@ -6,7 +6,8 @@ import traceback
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
 # from django.conf import settings
-from ..settings import api_settings as settings
+from ..settings import api_settings as settings # App Specific Settings
+from django.conf import settings as proj_settings # Project Specific Settings
 from django.template.loader import render_to_string
 from django.db import transaction
 # Rest Framework
@@ -44,22 +45,25 @@ def CreateUser(request):
                 user.save()
                 # token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256').decode()
                 token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256') 
-
-                activation_link = settings.C_SERVER_URL + "validate" + str(user.id) + "/" + str(token)
+                # This link Should direct to a frontend page and it will have a call to the bakcend to activate
+                activation_link = proj_settings.C_SERVER_URL + "validate/" + str(user.id) + "/" + str(token)
                 context = {
                     "name": user.first_name,
                     "link": activation_link
                 }
                 html_content = render_to_string("verify-email.html", context)
-                msg = EmailMultiAlternatives('Auth Test', 'Auth Link', settings.DEFAULT_FROM_EMAIL, [user.email])
+
+                msg = EmailMultiAlternatives('Auth Test', 'Auth Link', proj_settings.DEFAULT_FROM_EMAIL, [user.email])
                 msg.attach_alternative(html_content, "text/html")
-                msg.send(settings.DEFAULT_FROM_EMAIL)
+                msg.send(fail_silently=True)
+
                 return Response({"message": "User Created Successfully"}, status=201)
     except ValueError as e:
-        return Response({"message": traceback.format_exc()}, status=400)
+        print(traceback.format_exc())
+        return Response({"message": str(e)}, status=400)
     except Exception as e:
         print(traceback.format_exc())
-        return Response({"message": traceback.format_exc()}, status=400)
+        return Response({"message": str(e)}, status=400)
 
 
 # Verify EMail
@@ -142,15 +146,15 @@ def ChangePasswordRequest(request):
         data = request.data
         user = User.objects.get(email=data['email'])
         token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256').decode() 
-        activation_link = settings.C_SERVER_URL + "password_reset" + user.id + "/" + token
+        activation_link = proj_settings.C_SERVER_URL + "password_reset" + user.id + "/" + token
         context = {
             "name": user.first_name,
             "link": activation_link
         }
         html_content = render_to_string("reset-password.html", context)
-        msg = EmailMultiAlternatives('Reset Password', 'Reset PAssword', settings.DEFAULT_FROM_EMAIL, [user.email])
+        msg = EmailMultiAlternatives('Reset Password', 'Reset PAssword', proj_settings.DEFAULT_FROM_EMAIL, [user.email])
         msg.attach_alternative(html_content, "text/html")
-        msg.send(settings.DEFAULT_FROM_EMAIL)
+        msg.send(fail_silently=True)
         return Response({"message": "User Created Successfully"}, status=201)
     except Exception as e:
         return Response({"message": str(e)})   
