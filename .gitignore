@@ -1,0 +1,5 @@
+__pycache__/
+UNKNOWN.egg-info/
+ftd_auth.egg-info/
+dist/
+*.DS_Store

@@ -1,0 +1,4 @@
+include LICENSE
+include README.rst
+recursive-include ftd_auth/static *
+recursive-include ftd_auth/templates *
