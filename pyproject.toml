@@ -6,6 +6,10 @@ authors = ["shanaka11 <shanakaabeysinghe@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+djangorestframework = "^3.12.4"
+djangorestframework-simplejwt = "^5.0.0"
+django-cors-headers = "^3.10.0"
+django-environ = "^0.8.1"
 
 [tool.poetry.dev-dependencies]
 
