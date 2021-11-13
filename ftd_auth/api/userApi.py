@@ -46,7 +46,7 @@ def CreateUser(request):
                 # token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256').decode()
                 token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256') 
                 # This link Should direct to a frontend page and it will have a call to the bakcend to activate
-                activation_link = proj_settings.C_SERVER_URL + "validate/" + str(user.id) + "/" + str(token)
+                activation_link = proj_settings.C_CLIENT_URL + "validate/" + str(user.id) + "/" + str(token)
                 context = {
                     "name": user.first_name,
                     "link": activation_link
@@ -146,7 +146,7 @@ def ChangePasswordRequest(request):
         data = request.data
         user = User.objects.get(email=data['email'])
         token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256').decode() 
-        activation_link = proj_settings.C_SERVER_URL + "password_reset" + user.id + "/" + token
+        activation_link = proj_settings.C_CLIENT_URL + "password_reset" + user.id + "/" + token
         context = {
             "name": user.first_name,
             "link": activation_link
