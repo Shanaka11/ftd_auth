@@ -20,7 +20,7 @@ DEFAULTS = {
     'C_JWT_KEY': 'Leoisnotthebest',
     'C_JWT_TOKEN_EXP': 1000,
     'C_CLIENT_URL': 'http://localhost:3000/', #Default React Host
-    'C_SERVER_URL': 'http://localhost:8000' #Default Django Host
+    'C_SERVER_URL': 'http://localhost:8000/' #Default Django Host
 }
 
 api_settings = APISettings(USER_SETTINGS, DEFAULTS)

@@ -46,7 +46,7 @@ def CreateUser(request):
                 # token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256').decode()
                 token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256') 
                 # This link Should direct to a frontend page and it will have a call to the bakcend to activate
-                activation_link = proj_settings.C_CLIENT_URL + "validate/" + str(user.id) + "/" + str(token)
+                activation_link = proj_settings.C_CLIENT_URL + "/user/validate?id=" + str(user.id) + "&token=" + str(token)
                 context = {
                     "name": user.first_name,
                     "link": activation_link
@@ -146,7 +146,7 @@ def ChangePasswordRequest(request):
         data = request.data
         user = User.objects.get(email=data['email'])
         token = jwt.encode({'name': user.first_name, 'exp': datetime.datetime.now()}, settings.C_JWT_KEY, algorithm='HS256').decode() 
-        activation_link = proj_settings.C_CLIENT_URL + "password_reset" + user.id + "/" + token
+        activation_link = proj_settings.C_CLIENT_URL + "user/password_reset?id=" + str(user.id) + "&token=" + str(token)
         context = {
             "name": user.first_name,
             "link": activation_link
@@ -155,6 +155,6 @@ def ChangePasswordRequest(request):
         msg = EmailMultiAlternatives('Reset Password', 'Reset PAssword', proj_settings.DEFAULT_FROM_EMAIL, [user.email])
         msg.attach_alternative(html_content, "text/html")
         msg.send(fail_silently=True)
-        return Response({"message": "User Created Successfully"}, status=201)
+        return Response({"message": "Password Changed Successfully"}, status=201)
     except Exception as e:
         return Response({"message": str(e)})   
