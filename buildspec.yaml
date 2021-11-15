@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    # Set other neccessary environment variables here
+    # These can also be set in AWS CodeBuild Console
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - python3 -m venv /root/venv
+      - . /root/venv/bin/activate
+      - pip3 install pytest && pip3 install poetry
+      - poetry install
+  build:
+    commands:
+      - echo Running tests
+      - pytest -s
+      - export CODEARTIFACT_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain test-repo --repository ftd-repo --format pypi --query repositoryEndpoint --output text
+      - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain test-repo --query authorizationToken --output text`
+      - export CODEARTIFACT_USER=shanaka
+      - poetry config repositories.ftd $CODEARTIFACT_REPOSITORY_URL
+      - poetry config http-basic.ftd $CODEARTIFACT_USER $CODEARTIFACT_AUTH_TOKEN
+      - poetry publish --build -r ftd
+cache:
+  paths:
+    - '/root/venv/**/*'
+    - '/root/.cache/pip/**/*'
+    - '/root/.cache/pypoetry/virtualenvs/**/*'
