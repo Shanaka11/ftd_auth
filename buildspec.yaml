@@ -1,6 +1,6 @@
 version: 0.2
 
-env:
+# env:
   # variables:
     # Set other neccessary environment variables here
     # These can also be set in AWS CodeBuild Console
