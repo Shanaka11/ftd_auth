@@ -14,7 +14,7 @@ phases:
       - pip3 install --upgrade pip
       - pip3 install poetry
       - poetry install
-      - export CODEARTIFACT_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain test-repo --repository ftd-repo --format pypi --query repositoryEndpoint --output text'
+      - export CODEARTIFACT_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain test-repo --repository ftd-repo --format pypi --query repositoryEndpoint --output text`
       - export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain test-repo --query authorizationToken --output text`
       - export CODEARTIFACT_USER=shanaka
       - poetry config repositories.ftd $CODEARTIFACT_REPOSITORY_URL
