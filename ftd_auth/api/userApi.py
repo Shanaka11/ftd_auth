@@ -152,7 +152,7 @@ def ChangePasswordRequest(request):
             "link": activation_link
         }
         html_content = render_to_string("reset-password.html", context)
-        msg = EmailMultiAlternatives('Reset Password', 'Reset PAssword', proj_settings.DEFAULT_FROM_EMAIL, [user.email])
+        msg = EmailMultiAlternatives('Reset Password', 'Reset Password', proj_settings.DEFAULT_FROM_EMAIL, [user.email])
         msg.attach_alternative(html_content, "text/html")
         msg.send(fail_silently=True)
         return Response({"message": "Password Changed Successfully"}, status=201)
