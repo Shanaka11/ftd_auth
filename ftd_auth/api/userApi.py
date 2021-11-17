@@ -27,6 +27,7 @@ from ..serializers.userSerializer import LoginSerializer, UserSerializer
 class RefreshLogin(TokenRefreshView):
     pass
 
+@permission_classes([AllowAny])
 class Login(TokenObtainPairView):
     serializer_class = LoginSerializer
 
