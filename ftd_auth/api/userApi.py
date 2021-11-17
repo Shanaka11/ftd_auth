@@ -5,21 +5,23 @@ import traceback
 # Django
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
+from rest_framework import serializers
 # from django.conf import settings
 from ..settings import api_settings as settings # App Specific Settings
 from django.conf import settings as proj_settings # Project Specific Settings
 from django.template.loader import render_to_string
 from django.db import transaction
 # Rest Framework
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAdminUser
 # 3rd Party
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 # Local
-from ..serializers.userSerializer import LoginSerializer
+from ..serializers.userSerializer import LoginSerializer, UserSerializer
 
 
 class RefreshLogin(TokenRefreshView):
@@ -30,6 +32,7 @@ class Login(TokenObtainPairView):
 
 # Create User
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def CreateUser(request):
     data = request.data
     try:
@@ -91,6 +94,7 @@ def VerifyEmail(request, user_id=None, token=None):
 
 # Remove / Deactivate User
 @api_view(['POST'])
+@permission_classes([IsAdminUser])
 def RemoveUser(request, user_id):
     try:
         user = User.objects.get(id=user_id)
@@ -158,3 +162,20 @@ def ChangePasswordRequest(request):
         return Response({"message": "Password Changed Successfully"}, status=201)
     except Exception as e:
         return Response({"message": str(e)})   
+
+# Get User
+@api_view(['GET'])
+def GetUser(request, id):
+    user = User.objects.get(id = id)
+    serializer = UserSerializer(user)
+
+    return Response(serializer.data)
+
+# Get User List
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def GetUsers(request):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+
+    return Response(serializer.data)
